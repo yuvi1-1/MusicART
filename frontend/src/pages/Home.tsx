@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import AlbumCard from "../components/AlbumCard";
@@ -6,7 +6,7 @@ import { searchAlbums } from "../services/musicServices";
 import type { Album } from "../types/music";
 
 function Home() {
-  const [query, setQuery] = useState("kendrick");
+  const [query, setQuery] = useState("");
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,9 +26,6 @@ function Home() {
     }
   }
 
-  useEffect(() => {
-    fetchAlbums("kendrick");
-  }, []);
 
   function handleSearch(event: React.FormEvent<HTMLFormElement>) {
   event.preventDefault();
