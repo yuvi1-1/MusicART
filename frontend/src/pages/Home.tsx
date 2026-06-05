@@ -1,7 +1,51 @@
+import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
+import AlbumCard from "../components/AlbumCard";
+import { searchAlbums } from "../services/musicServices";
+import type { Album } from "../types/music";
 
 function Home() {
+  const [query, setQuery] = useState("kendrick");
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function fetchAlbums(searchQuery: string) {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await searchAlbums(searchQuery);
+      setAlbums(data);
+    } catch (err) {
+      console.error(err);
+      setError("Could not fetch albums. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchAlbums("kendrick");
+  }, []);
+
+  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  if (!query.trim()) {
+    return;
+  }
+
+  fetchAlbums(query);
+
+  setTimeout(() => {
+    document.getElementById("discover")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, 200);
+}
+
   return (
     <>
       <NavBar />
@@ -11,14 +55,15 @@ function Home() {
           <h1>Discover the Art of Music</h1>
           <p>Explore, review, and share your favorite music albums and artists.</p>
 
-          <div className="search-bar">
+          <form className="search-bar" onSubmit={handleSearch}>
             <input
               type="text"
               id="search-bar"
               placeholder="Search for albums or artists..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
             />
-            <button id="search-button">Search</button>
-          </div>
+          </form>
 
           <a href="#discover" className="cta-button">
             Get Started
@@ -28,8 +73,15 @@ function Home() {
 
       <section className="featured-albums" id="discover">
         <h2>Featured Albums</h2>
+
+        {loading && <p>Loading albums...</p>}
+        {error && <p>{error}</p>}
+
         <div className="album-grid">
-          <p>Albums will appear here...</p>
+          {!loading &&
+            albums.map((album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))}
         </div>
       </section>
 
