@@ -41,6 +41,9 @@ function NavBar() {
               <span className="nav-user">Hi, {user.username}</span>
             </li>
             <li>
+              <Link to="/profile">Profile</Link>
+            </li>
+            <li>
               <button className="nav-logout" onClick={handleLogout}>
                 Logout
               </button>

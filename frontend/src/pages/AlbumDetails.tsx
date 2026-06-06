@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { getAlbumTracks } from "../services/musicServices";
+import { addFavorite } from "../services/favoriteService";
 import {
   createReview,
   getAlbumReviews,
@@ -29,6 +30,9 @@ function AlbumDetails() {
   const [loading, setLoading] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState("");
+
+  const [favoriteMessage, setFavoriteMessage] = useState("");
+  const [favoriteError, setFavoriteError] = useState("");
 
   async function fetchTracks(albumId: string) {
     try {
@@ -107,6 +111,42 @@ function AlbumDetails() {
       }
     }
   }
+  
+  async function handleSaveAlbum() {
+  if (!album || !id) {
+    setFavoriteError("Album details not found.");
+    return;
+  }
+
+  const token = localStorage.getItem("musicart_token");
+
+  if (!token) {
+    setFavoriteError("Please login to save albums.");
+    return;
+  }
+
+  try {
+    setFavoriteError("");
+    setFavoriteMessage("");
+
+    await addFavorite({
+      albumId: id,
+      albumName: album.name,
+      artistName: album.artistName,
+      artworkUrl: album.artworkUrl,
+      genre: album.genre,
+      albumUrl: album.albumUrl,
+    });
+
+    setFavoriteMessage("Album saved to your profile.");
+  } catch (err) {
+    if (err instanceof Error) {
+      setFavoriteError(err.message);
+    } else {
+      setFavoriteError("Could not save album.");
+    }
+  }
+}
 
   return (
     <>
@@ -138,6 +178,14 @@ function AlbumDetails() {
               <a href={album.albumUrl} target="_blank" rel="noreferrer">
                 Open in Apple Music
               </a>
+              
+              <button className="save-album-button" onClick={handleSaveAlbum}>
+                Save Album
+              </button>
+              
+              {favoriteMessage && <p className="review-success">{favoriteMessage}</p>}
+              {favoriteError && <p className="auth-error">{favoriteError}</p>}
+
             </div>
           </section>
         )}

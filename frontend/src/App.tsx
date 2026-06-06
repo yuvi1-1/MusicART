@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import AlbumDetails from "./pages/AlbumDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/album/:id" element={<AlbumDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
