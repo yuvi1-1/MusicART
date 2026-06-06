@@ -6,8 +6,16 @@ interface AlbumCardProps {
 }
 
 function AlbumCard({ album }: AlbumCardProps) {
+  function saveAlbumForDetails() {
+    localStorage.setItem("selected_album", JSON.stringify(album));
+  }
+
   return (
-    <Link to={`/album/${album.id}`} className="album-card-link">
+    <Link
+      to={`/album/${album.id}`}
+      className="album-card-link"
+      onClick={saveAlbumForDetails}
+    >
       <div className="album-card">
         <img src={album.artworkUrl} alt={album.name} />
 
