@@ -26,22 +26,21 @@ function Home() {
     }
   }
 
-
   function handleSearch(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (!query.trim()) {
-    return;
+    if (!query.trim()) {
+      return;
+    }
+
+    fetchAlbums(query);
+
+    setTimeout(() => {
+      document.getElementById("discover")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }, 200);
   }
-
-  fetchAlbums(query);
-
-  setTimeout(() => {
-    document.getElementById("discover")?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, 200);
-}
 
   return (
     <>
@@ -69,10 +68,15 @@ function Home() {
       </header>
 
       <section className="featured-albums" id="discover">
-        <h2>Featured Albums</h2>
+        <h2>Discover Albums</h2>
 
         {loading && <p>Loading albums...</p>}
+
         {error && <p>{error}</p>}
+
+        {!loading && !error && albums.length === 0 && (
+          <p>Search for an artist or album to see results.</p>
+        )}
 
         <div className="album-grid">
           {!loading &&

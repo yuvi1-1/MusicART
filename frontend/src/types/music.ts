@@ -8,3 +8,11 @@ export interface Album {
   genre: string;
   albumUrl: string;
 }
+
+export interface Track {
+  id: number;
+  name: string;
+  trackNumber: number;
+  durationMs: number;
+  previewUrl?: string;
+}

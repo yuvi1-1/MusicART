@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { Album } from "../types/music";
 
 interface AlbumCardProps {
@@ -6,28 +7,26 @@ interface AlbumCardProps {
 
 function AlbumCard({ album }: AlbumCardProps) {
   return (
-    <div className="album-card">
-      <img src={album.artworkUrl} alt={album.name} />
+    <Link to={`/album/${album.id}`} className="album-card-link">
+      <div className="album-card">
+        <img src={album.artworkUrl} alt={album.name} />
 
-      <h3>{album.name}</h3>
+        <h3>{album.name}</h3>
 
-      <p>Artist: {album.artistName}</p>
+        <p>Artist: {album.artistName}</p>
 
-      <p>
-        Released:{" "}
-        {album.releaseDate
-          ? new Date(album.releaseDate).toLocaleDateString()
-          : "Unknown"}
-      </p>
+        <p>
+          Released:{" "}
+          {album.releaseDate
+            ? new Date(album.releaseDate).toLocaleDateString()
+            : "Unknown"}
+        </p>
 
-      <p>Genre: {album.genre}</p>
+        <p>Genre: {album.genre}</p>
 
-      <p>{album.trackCount} tracks</p>
-
-      <a href={album.albumUrl} target="_blank" rel="noreferrer">
-        Open in Apple Music
-      </a>
-    </div>
+        <p>{album.trackCount} tracks</p>
+      </div>
+    </Link>
   );
 }
 
