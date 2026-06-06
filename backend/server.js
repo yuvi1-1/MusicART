@@ -7,6 +7,7 @@ const musicRoutes = require("./routes/musicRoutes");
 const authRoutes = require("./routes/authRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
+const diaryRoutes = require("./routes/diaryRoutes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/music", musicRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/diary", diaryRoutes);
 
 async function connectDB() {
   try {
