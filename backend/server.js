@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const musicRoutes = require("./routes/musicRoutes");
 const authRoutes = require("./routes/authRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/music", musicRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 async function connectDB() {
   try {
