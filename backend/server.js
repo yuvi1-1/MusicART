@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const musicRoutes = require("./routes/musicRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -14,9 +16,22 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/music", musicRoutes);
+app.use("/api/auth", authRoutes);
+
+async function connectDB() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
+  }
+}
 
 const PORT = process.env.PORT || 5050;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
