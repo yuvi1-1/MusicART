@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { getAlbumTracks } from "../services/musicServices";
 import { addFavorite } from "../services/favoriteService";
+import { createDiaryEntry } from "../services/diaryService";
 import {
   createReview,
   getAlbumReviews,
@@ -33,6 +34,15 @@ function AlbumDetails() {
 
   const [favoriteMessage, setFavoriteMessage] = useState("");
   const [favoriteError, setFavoriteError] = useState("");
+
+  const [diaryDate, setDiaryDate] = useState(
+  new Date().toISOString().split("T")[0]);
+  const [diaryMood, setDiaryMood] = useState("");
+  const [diaryFavoriteTrack, setDiaryFavoriteTrack] = useState("");
+  const [diaryNote, setDiaryNote] = useState("");
+  const [diaryRating, setDiaryRating] = useState(5);
+  const [diaryMessage, setDiaryMessage] = useState("");
+  const [diaryError, setDiaryError] = useState("");
 
   async function fetchTracks(albumId: string) {
     try {
@@ -111,6 +121,51 @@ function AlbumDetails() {
       }
     }
   }
+
+  async function handleDiarySubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  if (!album || !id) {
+    setDiaryError("Album details not found. Go back and open the album again.");
+    return;
+  }
+
+  const token = localStorage.getItem("musicart_token");
+
+  if (!token) {
+    setDiaryError("Please login to add diary entries.");
+    return;
+  }
+
+  try {
+    setDiaryError("");
+    setDiaryMessage("");
+
+    await createDiaryEntry({
+      albumId: id,
+      albumName: album.name,
+      artistName: album.artistName,
+      artworkUrl: album.artworkUrl,
+      listenedDate: diaryDate,
+      mood: diaryMood,
+      favoriteTrack: diaryFavoriteTrack,
+      note: diaryNote,
+      rating: diaryRating,
+    });
+
+    setDiaryMessage("Album added to your diary.");
+    setDiaryMood("");
+    setDiaryFavoriteTrack("");
+    setDiaryNote("");
+    setDiaryRating(5);
+  } catch (err) {
+    if (err instanceof Error) {
+      setDiaryError(err.message);
+    } else {
+      setDiaryError("Could not add diary entry.");
+    }
+  }
+}
   
   async function handleSaveAlbum() {
   if (!album || !id) {
@@ -147,6 +202,7 @@ function AlbumDetails() {
     }
   }
 }
+
 
   return (
     <>
@@ -266,6 +322,64 @@ function AlbumDetails() {
               <button type="submit">Post Review</button>
             </form>
           </div>
+
+          <div className="review-form-card">
+  <h2>Add to Diary</h2>
+
+  {diaryError && <p className="auth-error">{diaryError}</p>}
+  {diaryMessage && <p className="review-success">{diaryMessage}</p>}
+
+  <form onSubmit={handleDiarySubmit}>
+    <label>Listened Date</label>
+    <input
+      type="date"
+      value={diaryDate}
+      onChange={(event) => setDiaryDate(event.target.value)}
+    />
+
+    <label>Rating</label>
+    <select
+      value={diaryRating}
+      onChange={(event) => setDiaryRating(Number(event.target.value))}
+    >
+      <option value={5}>5 - Masterpiece</option>
+      <option value={4.5}>4.5</option>
+      <option value={4}>4 - Great</option>
+      <option value={3.5}>3.5</option>
+      <option value={3}>3 - Good</option>
+      <option value={2.5}>2.5</option>
+      <option value={2}>2 - Okay</option>
+      <option value={1.5}>1.5</option>
+      <option value={1}>1 - Bad</option>
+      <option value={0.5}>0.5</option>
+    </select>
+
+    <label>Mood</label>
+    <input
+      type="text"
+      placeholder="e.g. nostalgic, chill, hype, sad"
+      value={diaryMood}
+      onChange={(event) => setDiaryMood(event.target.value)}
+    />
+
+    <label>Favorite Track</label>
+    <input
+      type="text"
+      placeholder="Your favorite song from this album"
+      value={diaryFavoriteTrack}
+      onChange={(event) => setDiaryFavoriteTrack(event.target.value)}
+    />
+
+    <label>Private Note</label>
+    <textarea
+      placeholder="How did this album feel today?"
+      value={diaryNote}
+      onChange={(event) => setDiaryNote(event.target.value)}
+    />
+
+    <button type="submit">Add to Diary</button>
+  </form>
+</div>
 
           <div className="reviews-list">
             <h2>Reviews</h2>

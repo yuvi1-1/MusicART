@@ -3,6 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import {
+  getMyDiaryEntries,
+  deleteDiaryEntry,
+  type DiaryEntry,
+} from "../services/diaryService";
+import {
   getMyFavorites,
   removeFavorite,
   type FavoriteAlbum,
@@ -17,6 +22,7 @@ function Profile() {
   const [favorites, setFavorites] = useState<FavoriteAlbum[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
 
   async function fetchFavorites() {
     try {
@@ -36,6 +42,24 @@ function Profile() {
     }
   }
 
+  async function fetchDiaryEntries() {
+  try {
+    const data = await getMyDiaryEntries();
+    setDiaryEntries(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+  async function handleDeleteDiaryEntry(entryId: string) {
+  try {
+    await deleteDiaryEntry(entryId);
+    setDiaryEntries((prev) => prev.filter((entry) => entry._id !== entryId));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
   async function handleRemove(albumId: string) {
     try {
       await removeFavorite(albumId);
@@ -54,6 +78,7 @@ function Profile() {
     }
 
     fetchFavorites();
+    fetchDiaryEntries();
   }, []);
 
   return (
@@ -123,6 +148,45 @@ function Profile() {
             ))}
           </div>
         </section>
+        
+        <section className="profile-section">
+  <h2>Music Diary</h2>
+
+  {diaryEntries.length === 0 && <p>No diary entries yet.</p>}
+
+  <div className="diary-list">
+    {diaryEntries.map((entry) => (
+      <div className="diary-entry-card" key={entry._id}>
+        <img src={entry.artworkUrl} alt={entry.albumName} />
+
+        <div>
+          <h3>{entry.albumName}</h3>
+          <p>{entry.artistName}</p>
+
+          <p>
+            Listened on:{" "}
+            {new Date(entry.listenedDate).toLocaleDateString()}
+          </p>
+
+          {entry.rating && <p>⭐ {entry.rating}/5</p>}
+          {entry.mood && <p>Mood: {entry.mood}</p>}
+          {entry.favoriteTrack && (
+            <p>Favorite track: {entry.favoriteTrack}</p>
+          )}
+          {entry.note && <p>{entry.note}</p>}
+
+          <button
+            className="remove-album-button"
+            onClick={() => handleDeleteDiaryEntry(entry._id)}
+          >
+            Delete Entry
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
       </main>
 
       <Footer />

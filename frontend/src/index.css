@@ -650,3 +650,45 @@ body {
   font-size: 2.3rem;
   margin-bottom: 2rem;
 }
+
+.diary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.diary-entry-card {
+  display: flex;
+  gap: 1.2rem;
+  background-color: #222;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 1.2rem;
+}
+
+.diary-entry-card img {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.diary-entry-card h3 {
+  margin-bottom: 0.4rem;
+}
+
+.diary-entry-card p {
+  color: #ccc;
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 650px) {
+  .diary-entry-card {
+    flex-direction: column;
+  }
+
+  .diary-entry-card img {
+    width: 100%;
+    height: auto;
+  }
+}
